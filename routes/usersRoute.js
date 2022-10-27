@@ -3,6 +3,8 @@ var router = express.Router();
 const bodyParser = require("body-parser");
 const { createUser, loginUser, logoutUser, updateUserById, getAllUser, getOneUser} = require('../controller/user')
 
+const authenticate = require('../middleware/autheticate')
+
 router.use(bodyParser.json())
 
 /* GET users listing. */

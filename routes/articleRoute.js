@@ -13,8 +13,6 @@ const {
 router.use(bodyParser.json())
 
 /* GET users listing. */
-router.route('/')
-  .get(authenticate.verifyAdmin, getAllUser)
 
 router.route('/')
 .get(getAllArticles)

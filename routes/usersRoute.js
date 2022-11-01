@@ -1,27 +1,29 @@
 var express = require('express');
-var router = express.Router();
+var userRouter = express.Router();
+var passport = require("passport")
 const bodyParser = require("body-parser");
 const { createUser, loginUser, logoutUser, updateUserById, getAllUser, getOneUser} = require('../controller/user')
 
 const authenticate = require('../middleware/autheticate')
 
-router.use(bodyParser.json())
+userRouter.use(bodyParser.json())
 
 /* GET users listing. */
-router.route('/')
-  .get(authenticate.verifyAdmin, getAllUser)
+userRouter
+  .route('/')
+  .get(getAllUser)
 
-router.route('/signup')
+userRouter.route('/signup')
 .post(createUser)
 
-router.route('/login')
-  .get(passport.authenticate('local'), loginUser)
+userRouter.route('/login')
+  .post(loginUser)
 
-router.route('/logout')
-  .get(authenticate.verifyAdmin, logoutUser)
-
-
+userRouter.route('/logout')
+  .get(logoutUser)
 
 
 
-module.exports = router;
+
+
+module.exports = userRouter;

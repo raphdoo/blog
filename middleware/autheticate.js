@@ -1,15 +1,13 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var User = require("./model/users");
+var User = require("../models/userSchema");
+const Article = require("../models/articleSchema")
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
-var config = require('./config.js');
+var config = require('../config');
 
-exports.local = passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 exports.getToken = function(user) {
     return jwt.sign(user, config.secretKey,
@@ -22,7 +20,6 @@ opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(new JwtStrategy(opts,
     (jwt_payload, done) => {
-        console.log("JWT payload: ", jwt_payload);
         User.findOne({_id: jwt_payload._id}, (err, user) => {
             if (err) {
                 return done(err, false);
@@ -37,3 +34,20 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', { session: false });
+
+exports.verifyAuthor = async (req, res, next)=>{
+    const article = await Article.findById(req.params.articleID).populate('author')
+    if(!article){
+        res.status(403).json({ msg: 'Id not available' })
+        return;
+    }
+    let userRequesting = req.user.id
+    let articleAuthor = article.author.id
+
+    if(userRequesting == articleAuthor){
+        next()
+    }
+    else{
+        res.status(403).json({ msg: 'You are not authorised to update this blog' })
+    } 
+}

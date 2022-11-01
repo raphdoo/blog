@@ -1,9 +1,10 @@
 //importing the mongoose database ORM
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const userRouter = require("../routes/usersRoute");
 const Schema = mongoose.Schema;
 
 
-//modelling the dish schema
+//modelling the article schema
 const articleSchema = new Schema({
     title: {
         type : String,
@@ -12,23 +13,25 @@ const articleSchema = new Schema({
     },
     description: {
         type: String,
+    },
+    body: {
+        type: String,
         required: true,
         unique: true
     },
-    tags: {
-        type: String,
-        required: true
-    },
+    tags: [{
+        type: String
+    }],
     state: {
         type: String,
         enum: ['draft', 'published'],
         default: 'draft'
     },
-    readCount: {
+    read_count: {
         type: Number,
         default: 0
     },
-    readTime: {
+    reading_time: {
         type: Number,
         default: 0
     },

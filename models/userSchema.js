@@ -1,10 +1,23 @@
 //importing the mongoose database ORM
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema
-var passportLocalMongoose = require('passport-local-mongoose')
 
 //modelling the leader schema
 const UserSchema = new Schema({
+    email:{
+        type: String,
+        default: '',
+        required: true
+    },
+    username:{
+        type: String,
+        default: ''
+    },
+    password:{
+        type: String,
+        default: '',
+        required: true
+    },
     firstname:{
         type: String,
         default: '',
@@ -17,7 +30,7 @@ const UserSchema = new Schema({
     }
 })
 
-UserSchema.plugin(passportLocalMongoose)
+
 
 const users = mongoose.model("User", UserSchema) //creating the model
 

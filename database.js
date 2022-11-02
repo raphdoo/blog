@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const config = require("./config")
 
-
-function connectToDatabase() {
-    mongoose.createConnection(config.mongoUrl)
+const connect = (url) => {
+    mongoose.connect(url || config.mongoUrl)
 
     mongoose.connection.on("connected", () => {
         console.log("Connected to MongoDB Successfully");
@@ -16,5 +15,5 @@ function connectToDatabase() {
 }
 
 module.exports = {
-    connectToDatabase
-}
+    connect
+};

@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const request = require('supertest')
 const { connect } = require('./database')
 const User = require('../models/userSchema')
-const app = require('../app');
+const app = require('../index');
 
 describe('Auth: Signup', () => {
     let conn;

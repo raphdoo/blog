@@ -28,8 +28,8 @@ async function createUser(req, res) {
   user.username = email
   await user.save()
   res.json({
-      msg: "Registration successful!",
-      data: user
+      message: "Registration successful!",
+      user: user
   })
 };
 

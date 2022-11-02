@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node app.js",
     "test": "jest --detectOpenHandles",
-    "start:dev": "nodemon ./bin/www"
+    "start:dev": "nodemon app.js"
   },
   "dependencies": {
     "argon2": "^0.30.1",

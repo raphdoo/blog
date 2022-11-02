@@ -3,7 +3,7 @@ const config = require("./config")
 
 
 function connectToDatabase() {
-    mongoose.connect(config.mongoUrl)
+    mongoose.createConnection(config.mongoUrl)
 
     mongoose.connection.on("connected", () => {
         console.log("Connected to MongoDB Successfully");

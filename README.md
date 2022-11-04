@@ -199,7 +199,7 @@ Success
 ---
 
 ### Get All Blogs for a User
-- Route: /articles/:userID
+- Route: /articles/user/:userID
 - Method: GET
 - Header
     - Authorization: Bearer {token}

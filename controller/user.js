@@ -27,7 +27,7 @@ async function createUser(req, res) {
   const user = await User.create(newUser)
   user.username = email
   await user.save()
-  res.json({
+  res.status(201).json({
       message: "Registration successful!",
       user: user
   })
@@ -37,12 +37,12 @@ const loginUser = async (req, res, next) => {
     const { email, password } = req.body
     const user = await validateUser(email, password)
     if (!user) {
-        return res.status(401).send("Invalid crendentials!")
+        return res.status(401).json({success:false, message:"invalid credential"})
     }
     var token = authenticate.getToken({ _id: user._id })
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.json({ success: true, token, status: 'You are successfully logged in' })
+    res.json({ success: true, token })
 }
 
 const logoutUser = async (req, res, next) => {

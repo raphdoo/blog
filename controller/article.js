@@ -24,7 +24,7 @@ const createArticle = async (req, res, next) => {
     const article = await Article.findOne({ _id: newArticle._id}).populate('author')
     
       res.setHeader('Content-Type', 'application/json')
-      res.status(200).json({status: true, article})
+      res.status(201).json({status: true, article})
   }catch(err){
     res.status(404).json({err: err})
   }
@@ -50,7 +50,6 @@ const getAllArticles = async (req, res, next) => {
             {
                 $or: [
                     { title: regex },
-                    // { author : regex },
                     { tags: regex }
                 ],
             },
@@ -68,7 +67,7 @@ const getAllArticles = async (req, res, next) => {
 }
 
 const getUserArticles = async (req, res, next) => {
-  try{
+    const userID = req.params.userID
     const page = parseInt(req.query.page)-1 || 0
     const limit = parseInt(req.query.limit) || 20
     const state = req.query.state || "published"
@@ -76,15 +75,13 @@ const getUserArticles = async (req, res, next) => {
 
 
     console.log(req.user)
-    const articles = await Article.find({author: req.user._id, state: state})
+    const articles = await Article.find({author: userID, state: state})
     .skip(page * limit)
     .limit(limit).populate('author')
 
     res.status(200).json({ status: true, page: page+1, limit, articles })
       
-  }catch(err){
-    res.status(404).json({err: err})
-  }
+  
 }
 
 const getArticle = async (req, res, next) => {

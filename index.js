@@ -1,8 +1,9 @@
+//installing packages
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/indexRoute');
+//importing routes
 var usersRouter = require('./routes/usersRoute');
 var articleRouter = require('./routes/articleRoute');
 
@@ -17,8 +18,18 @@ app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+//setting up routes
 app.use('/users', usersRouter);
 app.use('/articles', articleRouter)
+
+// home route
+app.get('/', (req, res) => {
+    return res.json({ status: true })
+})
+
+// 404 route
+app.use('*', (req, res) => {
+    return res.status(404).json({ message: 'route not found' })
+})
 
 module.exports = app;

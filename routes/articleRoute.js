@@ -20,7 +20,7 @@ router.route('/')
   .get(getAllArticles)
   .post(authenticate.verifyUser, createArticle)
 
-  router.route('/user')
+  router.route('/:userID')
   .get(authenticate.verifyUser, getUserArticles)
 
 router.route('/:articleID')

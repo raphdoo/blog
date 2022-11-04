@@ -3,12 +3,13 @@ const request = require('supertest')
 const { connect } = require('./database')
 const User = require('../models/userSchema')
 const app = require('../index');
+const {hashPassword} = require('../middleware/pwdAuth')
 
-describe('Auth: Signup', () => {
+describe('Auth: User', () => {
     let conn;
     
     beforeAll(async () => {
-        conn = await connect()
+        conn = await connect()       
     })
 
     afterEach(async () => {
@@ -19,7 +20,7 @@ describe('Auth: Signup', () => {
         await conn.disconnect()
     })
 
-    it('should signup a user', async (done) => {
+    it('should signup a user', async () => {
         const response = await request(app).post('/users/signup')
         .set('content-type', 'application/json')
         .send({ 
@@ -29,7 +30,7 @@ describe('Auth: Signup', () => {
             email: 'tobi@mail.com'
         })
 
-        expect(response.status).toBe(200)
+        expect(response.status).toBe(201)
         expect(response.body).toHaveProperty('message')
         expect(response.body).toHaveProperty('user')
         expect(response.body.user).toHaveProperty('firstname', 'tobie')
@@ -38,21 +39,57 @@ describe('Auth: Signup', () => {
     })
 
 
-//     it('should login a user', async () => {
-//         // create user in out db
-//         const user = await UserModel.create({ username: 'tobi', password: '123456'});
+    it('successful login:Correct details', async () => {
+      // create user in out db
+      const newUser = {
+        email: "tobi@gmail.com",
+        password: "123456",
+        firstname: "Tobi",
+        lastname: "babatunde",
+      };
+      const hashedPassword = await hashPassword(newUser.password);
+      newUser.password = hashedPassword;
+      const user = await User.create(newUser);
+      // login user
+      const response = await request(app)
+        .post("/users/login")
+        .set("content-type", "application/json")
+        .send({
+          email: "tobi@gmail.com",
+          password: "123456",
+        });
 
-//         // login user
-//         const response = await request(app)
-//         .post('/login')
-//         .set('content-type', 'application/json')
-//         .send({ 
-//             username: 'tobi', 
-//             password: '123456'
-//         });
-    
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("success");
+      expect(response.body).toHaveProperty("token");
+      expect(response.body.success).toBeTruthy()
+    })
 
-//         expect(response.status).toBe(200)
-//         expect(response.body).toHaveProperty('token')      
-//     })
+    it('failed login: Incorrect details', async () => {
+        // create user in out db
+        const newUser = {
+          email: "tobi@gmail.com",
+          password: "123456",
+          firstname: "Tobi",
+          lastname: "babatunde",
+        };
+        const hashedPassword = await hashPassword(newUser.password);
+        newUser.password = hashedPassword;
+        const user = await User.create(newUser);
+        // login user
+        const response = await request(app)
+          .post("/users/login")
+          .set("content-type", "application/json")
+          .send({
+            email: "tobi@gmail.co",
+            password: "123456",
+          });
+  
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty("success");
+        expect(response.body).toHaveProperty("message");
+        expect(response.body.success).toBeFalsy()
+        expect(response.body.message).toBe("invalid credential")
+      }
+      )
 })

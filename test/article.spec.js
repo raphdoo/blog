@@ -14,6 +14,9 @@ describe('Article Route', () => {
     beforeAll(async () => {
         conn = await connect()
 
+    })
+
+    beforeEach(async () => {
         const newUser = {
             email: "tobi@gmail.com",
             password: "123456",
@@ -86,16 +89,15 @@ describe('Article Route', () => {
         // create order in our db
         let content1 = "quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
 
-          const article = new Article(
+          const article = await Article.create( 
             {
-                title: "suth aut facere repellat provident occaecati excepturi optio reprehenderit",
-                description: "description1",
+                title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
                 tags: ["Anker2", "Soundcore2"],
-                body: "quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
+                body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
             }
           )
         await article.save() 
-        const articleID = Number(article.id)
+        const articleID = article._id.toString()
         const response = await request(app)
         .get(`/articles/${articleID}`)
         .set('content-type', 'application/json')
@@ -123,6 +125,7 @@ describe('Article Route', () => {
 
     it('create an article -> logged in user', async () => {
         // create order in our db
+        
         const response = await request(app).post('/articles')
         .set('content-type', 'application/json')
         .set('Authorization', `Bearer ${token}`)
@@ -133,13 +136,85 @@ describe('Article Route', () => {
             tags: 'title, body, description'
         })
 
-        expect(response.status).toBe(200)
+        expect(response.status).toBe(201)
         expect(response.body).toHaveProperty('article')
         expect(response.body).toHaveProperty('status', true)
 
     })
+
+    it('Failed update of an articleID => not logged in user', async () => {
+        // create order in our db
+        let content1 = "quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
+
+          const article = await Article.create( 
+            {
+                title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
+                tags: ["Anker2", "Soundcore2"],
+                body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
+            }
+          )
+        await article.save() 
+        const articleID = article._id.toString()
+        const response = await request(app)
+        .get(`/articles/${articleID}`)
+        .set('content-type', 'application/json')
+        .send({
+            title:"new title"
+        })
+
+        expect(response.status).toBe(401)
+        
+    })
+
+    it('Failed update of an articleID => invalid articleID', async () => {
+        // create order in our db
+
+          const article = await Article.create( 
+            {
+                title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
+                tags: ["Anker2", "Soundcore2"],
+                body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
+            }
+          )
+        await article.save() 
+        const articleID = article._id.toString()
+        const response = await request(app)
+        .get(`/articles/987654329e`)
+        .set('content-type', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+            title:"new title"
+        })
+    })
+
+        it('Successfully update => valid articleID and authentication', async () => {
+            // create order in our db
+    
+              const article = await Article.create( 
+                {
+                    title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
+                    tags: ["Anker2", "Soundcore2"],
+                    body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
+                }
+              )
+            await article.save() 
+            const articleID = article._id.toString()
+            const response = await request(app)
+            .get(`/articles/${articleID}`)
+            .set('content-type', 'application/json')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                title:"new title"
+            })
+    
     
 
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('article')
+        expect(response.body.article.title).toBe('new title')
+    })
+    
+    
 
 
     // it('should return orders with state 2', async () => {

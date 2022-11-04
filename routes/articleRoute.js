@@ -5,7 +5,7 @@ const authenticate = require('../middleware/autheticate')
 const {
   createArticle,
   getAllArticles,
-  getArticle,
+  getAnArticle,
   updateArticle,
   deleteArticle,
   getUserArticles,
@@ -20,11 +20,12 @@ router.route('/')
   .get(getAllArticles)
   .post(authenticate.verifyUser, createArticle)
 
-  router.route('/:userID')
+  router.route('/user/:userID')
   .get(authenticate.verifyUser, getUserArticles)
 
+
 router.route('/:articleID')
-  .get(getArticle)
+  .get(getAnArticle)
   .put(authenticate.verifyUser, authenticate.verifyAuthor, updateArticle)
   .patch(authenticate.verifyUser, authenticate.verifyAuthor, updateState)
   .delete(authenticate.verifyUser, authenticate.verifyAuthor, deleteArticle)

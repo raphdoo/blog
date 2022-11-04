@@ -1,3 +1,4 @@
+//importing modules
 const mongoose = require("mongoose");
 const Article = require('../models/articleSchema')
 const passport = require('passport')
@@ -84,7 +85,7 @@ const getUserArticles = async (req, res, next) => {
   
 }
 
-const getArticle = async (req, res, next) => {
+const getAnArticle = async (req, res, next) => {
   try{
     const { articleID } = req.params// destructured the req.params.id and passed it to var
     const article = await Article.findById(articleID).populate('author')
@@ -103,7 +104,7 @@ const updateArticle = async (req, res, next) => {
 
     const article = await Article.findByIdAndUpdate(articleID, { $set: req.body }, { new: true })
     res.setHeader('Content-Type', 'application/json')
-    res.status(200).json({ msg: 'article updated successfully', article})    
+    res.status(200).json({ message: 'article updated successfully', article})    
   }catch(err){
     res.status(404).json({err:err})
   }
@@ -115,7 +116,7 @@ const updateState = async (req, res, next) => {
 
     const article = await Article.findByIdAndUpdate(articleID, { $set: req.body }, { new: true })
     res.setHeader('Content-Type', 'application/json')
-    res.status(200).json({ msg: 'article updated successfully', article})    
+    res.status(200).json({ message: 'article updated successfully', article})    
   }catch(err){
     res.status(404).json({err:err})
   }
@@ -140,7 +141,7 @@ const deleteArticle = async (req, res, next) => {
 module.exports = {
   createArticle,
   getAllArticles,
-  getArticle,
+  getAnArticle,
   updateArticle,
   deleteArticle,
   getUserArticles,

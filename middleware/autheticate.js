@@ -41,8 +41,8 @@ exports.verifyAuthor = async (req, res, next)=>{
         res.status(403).json({ msg: 'Id not available' })
         return;
     }
-    let userRequesting = req.user.id
-    let articleAuthor = article.author.id
+    let userRequesting = req.user._id.toString()
+    let articleAuthor = article.author._id.toString()
 
     if(userRequesting == articleAuthor){
         next()

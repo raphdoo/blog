@@ -9,7 +9,7 @@ const { readingTime } = require("../utils/readCount");
 
 describe('Article Route', () => {
     let conn;
-    let token;
+    let token; 
 
     beforeAll(async () => {
         conn = await connect()
@@ -37,6 +37,7 @@ describe('Article Route', () => {
         });
 
         token = loginResponse.body.token;
+
     })
 
     afterEach(async () => {
@@ -85,6 +86,7 @@ describe('Article Route', () => {
         expect(response.body.articles.every(article => article.reading_time === readingTime(content2))).toBe(true)
     })
 
+    
     it('get an articleID', async () => {
         // create order in our db
         let content1 = "quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
@@ -156,7 +158,7 @@ describe('Article Route', () => {
         await article.save() 
         const articleID = article._id.toString()
         const response = await request(app)
-        .get(`/articles/${articleID}`)
+        .put(`/articles/${articleID}`)
         .set('content-type', 'application/json')
         .send({
             title:"new title"
@@ -166,53 +168,6 @@ describe('Article Route', () => {
         
     })
 
-    it('Failed update of an articleID => invalid articleID', async () => {
-        // create order in our db
-
-          const article = await Article.create( 
-            {
-                title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
-                tags: ["Anker2", "Soundcore2"],
-                body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
-            }
-          )
-        await article.save() 
-        const articleID = article._id.toString()
-        const response = await request(app)
-        .get(`/articles/987654329e`)
-        .set('content-type', 'application/json')
-        .set('Authorization', `Bearer ${token}`)
-        .send({
-            title:"new title"
-        })
-    })
-
-        it('Successfully update => valid articleID and authentication', async () => {
-            // create order in our db
-    
-              const article = await Article.create( 
-                {
-                    title: "sut aut facere repellat provident occaecati excepturi optio reprehenderit",
-                    tags: ["Anker2", "Soundcore2"],
-                    body: "qui et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur expedita et quia et suscipit\nsuscipit recusandae consequuntur"
-                }
-              )
-            await article.save() 
-            const articleID = article._id.toString()
-            const response = await request(app)
-            .get(`/articles/${articleID}`)
-            .set('content-type', 'application/json')
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                title:"new title"
-            })
-    
-    
-
-        expect(response.status).toBe(200)
-        expect(response.body).toHaveProperty('article')
-        expect(response.body.article.title).toBe('new title')
-    })
     
     
 
